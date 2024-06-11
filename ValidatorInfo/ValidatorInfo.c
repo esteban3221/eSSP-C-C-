@@ -4,14 +4,14 @@
 #include <unistd.h>
 
 //#define PORT_TO_USE "/dev/ttyS0" //USB0"
-#define PORT_TO_USE "/dev/ttyUSB0"
+//#define PORT_TO_USE "/dev/ttyUSB1"
 //#define PORT_TO_USE "/dev/ttyUSB1"
 
 
 void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 {
     SSP_COMMAND_SETUP ssp_setup;
-    SSP_POLL_DATA poll;
+    //SSP_POLL_DATA poll;
     SSP_UNIT_DATA unit_data;
     SSP_CHANNEL_DATA scd;
     SSP_SETUP_REQUEST_DATA setup_data;
@@ -28,7 +28,7 @@ void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 	if (ssp_sync(ssp_setup) != SSP_RESPONSE_OK)
 	{
 	    printf("NO VALIDATOR FOUND\n");
-	    return;
+	    //return;
 	}
 	printf ("Validator Found\n");
 
@@ -41,7 +41,7 @@ void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 	if (ssp_get_serial(ssp_setup,&serial) != SSP_RESPONSE_OK)
 	{
 		printf("Serial Failed\n");
-		return;
+		//return;
 	}
 	printf("-------------SERIAL----------------\n");
 	printf("Serial: %ld\n",serial);
@@ -49,7 +49,7 @@ void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 	if (ssp_unit_data(ssp_setup,&unit_data) != SSP_RESPONSE_OK)
 	{
 		printf("Unit Data Failed\n");
-		return;
+		//return;
 	}
 	printf("-------------UNIT DATA----------------\n");
 	printf("UnitType: %d\n",unit_data.UnitType);
@@ -62,7 +62,7 @@ void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 	if (ssp_channel_value_data(ssp_setup,&scd) != SSP_RESPONSE_OK)
 	{
 		printf("channel data failed\n");
-		return;
+		//return;
 	}
 	printf("-------------Channel Data-------------\n");
 	printf("NumChans: %d\n",scd.NumberOfChannels);
@@ -72,7 +72,7 @@ void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 	if (ssp_channel_security_data(ssp_setup,&scd) != SSP_RESPONSE_OK)
 	{
 		printf("channel security data failed\n");
-		return;
+		//return;
 	}
 	printf("-------------Security Data-------------\n");
 	printf("NumChans: %d\n",scd.NumberOfChannels);
@@ -82,7 +82,7 @@ void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 	if (ssp_setup_request(ssp_setup,&setup_data) != SSP_RESPONSE_OK)
 	{
 		printf("Setup Request Failed\n");
-		return;
+		//return;
 	}
 	printf("-------------SETUP REQUEST----------------\n");
 	printf("UnitType: %d\n",setup_data.UnitType);
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     if (port == -1)
 	{
 	    printf("Port Error\n");
-        return 1;
+        //return 1;
 	}
 
     //set the ssp address

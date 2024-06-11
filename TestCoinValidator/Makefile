@@ -13,8 +13,8 @@ CFLAGS = -Wall
 INCLUDES = 
 LDFLAGS =  -s
 RCFLAGS = 
-LDLIBS = $(T_LDLIBS)  -lstdc++ -lpthread
-\LDLIBS = $(T_LDLIBS)  -lpthread
+\LDLIBS = $(T_LDLIBS)  -lstdc++ -lpthread
+LDLIBS = $(T_LDLIBS)  -lpthread
 
 LINK_exe = gcc -o $@ $^ $(LDFLAGS) $(LDLIBS)
 LINK_con = gcc -o $@ $^ $(LDFLAGS) $(LDLIBS)
@@ -47,9 +47,9 @@ clean :
 # -----------------------------------------
 # Release_target
 
-Release_target.BIN = BasicValidator
-Release_target.OBJ = BasicValidator.o 
-DEP_FILES += BasicValidator.d 
+Release_target.BIN = TestCoinValidator
+Release_target.OBJ = TestCoinValidator.o 
+DEP_FILES += TestCoinValidator.d 
 clean.OBJ += $(Release_target.BIN) $(Release_target.OBJ)
 
 Release_target : Release_target.before $(Release_target.BIN) Release_target.after_always

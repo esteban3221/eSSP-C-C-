@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+unsigned deno[7] = {0,20,50,100,200,500,1000};
 
 void ParsePoll(SSP_POLL_DATA * poll)
 {
-	int i;
-	for (i = 0; i < poll->event_count; ++i)
+	unsigned long a;
+	for (int i = 0; i < poll->event_count; ++i)
 	{
 		switch(poll->events[i].event)
 		{
@@ -16,30 +17,19 @@ void ParsePoll(SSP_POLL_DATA * poll)
 			break;
 		case SSP_POLL_READ:
 			if (poll->events[i].data > 0)
-				printf("Note Read %ld\n",poll->events[i].data);
+			a = poll->events[i].data;
 			break;
 		case SSP_POLL_CREDIT:
-			printf("Credit %ld\n",poll->events[i].data);
-			break;
-		case SSP_POLL_REJECTING:
-			break;
-		case SSP_POLL_REJECTED:
-			printf("Note Rejected\n");
+			a = poll->events[i].data;
 			break;
 		case SSP_POLL_STACKING:
 			break;
 		case SSP_POLL_STACKED:
-			printf("Stacked\n");
+		{
+			printf("Stacked %d MXN$\n" , deno[a]);
+			a = 0;
 			break;
-		case SSP_POLL_SAFE_JAM:
-			printf("Safe Jam\n");
-			break;
-		case SSP_POLL_UNSAFE_JAM:
-			printf("Unsafe Jam\n");
-			break;
-		case SSP_POLL_DISABLED:
-			printf("DISABLED\n");
-			break;
+		}
 		case SSP_POLL_FRAUD_ATTEMPT:
 			printf("Fraud Attempt %ld\n",poll->events[i].data);
 			break;
@@ -54,55 +44,28 @@ void RunValidator(SSP_PORT port, const unsigned char ssp_address)
 {
     SSP_COMMAND_SETUP ssp_setup;
     SSP_POLL_DATA poll;
-    //setup the required information
+
 	ssp_setup.port = port;
 	ssp_setup.Timeout = 1000;
 	ssp_setup.RetryLevel = 3;
 	ssp_setup.SSPAddress = ssp_address;
 	ssp_setup.EncryptionStatus = NO_ENCRYPTION;
 
-    //check validator is present
-	if (ssp_sync(ssp_setup) != SSP_RESPONSE_OK)
-	{
-	    printf("NO VALIDATOR FOUND\n");
-	    return;
-	}
-	printf ("Validator Found\n");
-
-    //try to setup encryption using the default key
 	if (ssp_setup_encryption(&ssp_setup,(unsigned long long)0x123456701234567LL) != SSP_RESPONSE_OK)
-        printf("Encryption Failed\n");
-    else
-        printf("Encryption Setup\n");
 
-    //enable the unit
-	if (ssp_enable(ssp_setup) != SSP_RESPONSE_OK)
-	{
-	    printf("Enable Failed\n");
-        return;
-	}
-	
-
-    //set the inhibits (enable all note acceptance)
-	if (ssp_set_inhibits(ssp_setup,0xFF,0xFF) != SSP_RESPONSE_OK)
-	{
-	    printf("Inhibits Failed\n");
-        return;
-	}
-	ssp_reset(ssp_setup);
-	sleep(20);
+	ssp_enable(ssp_setup);
+	ssp_set_inhibits(ssp_setup,0xFF,0xFF);
 
 	while (1)
 	{
-	    //poll the unit
 	    if (ssp_poll(ssp_setup,&poll) != SSP_RESPONSE_OK)
         {
             printf("SSP_POLL_ERROR\n");
-            return;
         }
 	    ParsePoll(&poll);
-        usleep(500000); //500 ms delay between polls
+        usleep(50000); //500 ms delay between polls
 	}
+	
 }
 
 int main(int argc, char *argv[])
